@@ -67,9 +67,33 @@ def process_sales_data(sales_csv, orders_dir):
         # Export the data to an Excel sheet
         sheet_name = f'Order{order_id}'
         order_df.to_excel(order_file_path, index=False,sheet_name=sheet_name)
-        # TODO: Format the Excel sheet
-        print(order_df)
+        # Format the Excel sheet
+        # Create a Pandas Excel writer using XlsxWriter as the engine.
+        writer = pd.ExcelWriter(order_file_path, engine='xlsxwriter')
+
+        # Convert the dataframe to an XlsxWriter Excel object.
+        sheet_name=f'Order{order_id}'
+        order_df.to_excel(writer, sheet_name=sheet_name)
+
+        # Get the xlsxwriter workbook and worksheet objects.
+        workbook  = writer.book
+        worksheet = writer.sheets[sheet_name]
+
+        # Set the column width and format.
+        add_doller= workbook.add_format({'num_format':'#,##0.00'}) 
+
+        # Set the format but not the column width.
+        worksheet.set_column('A:A', 11)
+        worksheet.set_column('B:B', 13)
+        worksheet.set_column('C:E', 15)
+        worksheet.set_column('F:G', 13, add_doller)
+        worksheet.set_column('H:H', 10)
+        worksheet.set_column('I:I', 30)
+
+# Close the Pandas Excel writer and output the Excel file.
+        writer.close()
         break
+
 
 if __name__ == '__main__':
     main()
